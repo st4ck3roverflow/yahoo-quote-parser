@@ -13,7 +13,7 @@ def index_page():
 def get_quote():
     args = request.args
     if not args:
-        return 'Ti pidoras'
+        return 'no_args'
     else:
         for i in args:
             if i == 'quote':
