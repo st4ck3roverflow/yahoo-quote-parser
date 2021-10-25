@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template
-import yahoo_mod
+from yahoo_mod import YahooParser
 
 app = Flask(__name__)
 
@@ -17,7 +17,22 @@ def get_quote():
     else:
         for i in args:
             if i == 'quote':
-                return yahoo_mod.get_quote_json(args.get('quote'))
+                yp_instance = YahooParser(args.get('quote'))
+                yp_instance.get_quote()
+                return yp_instance.parse_csv()
+
+
+@app.route('/get_quote_selenium')
+def get_quote_selenium():  # request answer await >20 sec
+    args = request.args
+    if not args:
+        return 'no_args'
+    else:
+        for i in args:
+            if i == 'quote':
+                yp_instance = YahooParser(args.get('quote'))
+                yp_instance.get_quote_selenium()
+                return yp_instance.parse_csv()
 
 
 if __name__ == '__main__':
