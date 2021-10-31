@@ -2,6 +2,9 @@ from flask import Flask, request, render_template
 
 import yahoo_mod
 from yahoo_mod import YahooParser
+import os
+
+os.environ["PATH"] += '/app/geckodriver'
 
 print("[*] starting daemon")
 updater_instance = yahoo_mod.YahooDaemon()
@@ -37,7 +40,9 @@ def get_quote():
 
 @app.route('/test')
 def test_():
-    return ':)'
+    import os
+
+    return str(os.path.dirname(os.path.abspath(__file__)))
 
 
 if __name__ == '__main__':

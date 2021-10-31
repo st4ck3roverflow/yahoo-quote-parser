@@ -4,6 +4,10 @@ import requests
 import base64
 import time
 from selenium import webdriver
+
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from selenium.webdriver.firefox.options import Options
+
 import sqlite3
 from threading import Thread, Event
 import json
@@ -125,7 +129,11 @@ class YahooParser:
         (slowest way)
         :return: None or error in format (err_SOURCE_ERROR+TEXT+FROM+EXCEPTION)
         """
-        driver = webdriver.Firefox()
+        options = Options()
+        options.headless = True
+        # change path to exe before start outside docker
+        binary = FirefoxBinary('/app/geckodriver.exe')
+        driver = webdriver.Firefox(firefox_binary=binary, executable_path='/app/geckodriver.exe', options=options)
         try:
             driver.get(f"https://finance.yahoo.com/quote/{self.quote}/history")
             print("[+] started driver")
