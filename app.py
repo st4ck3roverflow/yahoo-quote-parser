@@ -1,5 +1,13 @@
 from flask import Flask, request, render_template
+
+import yahoo_mod
 from yahoo_mod import YahooParser
+
+print("[*] starting daemon")
+updater_instance = yahoo_mod.YahooDaemon()
+print("[+] created updater instance")
+updater_instance.start()
+print("[+] started updater instance")
 
 app = Flask(__name__)
 
@@ -18,21 +26,18 @@ def get_quote():
         for i in args:
             if i == 'quote':
                 yp_instance = YahooParser(args.get('quote'))
-                yp_instance.get_quote()
-                return yp_instance.parse_csv()
+                answ = yp_instance.read_from_db()
+                if answ.startswith('err_'):
+                    if answ == "err_readdb_operationerr":
+                        return "404 Not Found"
+                    else:
+                        return "500 Internal Server Error"
+                return answ
 
 
-@app.route('/get_quote_selenium')
-def get_quote_selenium():  # request answer await >20 sec
-    args = request.args
-    if not args:
-        return 'no_args'
-    else:
-        for i in args:
-            if i == 'quote':
-                yp_instance = YahooParser(args.get('quote'))
-                yp_instance.get_quote_selenium()
-                return yp_instance.parse_csv()
+@app.route('/test')
+def test_():
+    return ':)'
 
 
 if __name__ == '__main__':
